@@ -1,0 +1,37 @@
+version: "3"
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: always
+    user: "998:997"
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+    volumes:
+    # Data persistency
+    # sudo mkdir -p /srv/docker/influxdb/data
+      - "/home/viplov/Documents/Docker_Project/Grafana/influxdb/etc/influxdb:/etc/influxdb"
+      - "/home/viplov/Documents/Docker_Project/Grafana/influxdb/var/lib/influxdb:/var/lib/influxdb"
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    restart: always
+    user: "997:996"
+    links:
+      - influxdb
+    volumes:
+      - "/home/viplov/Documents/Docker_Project/Grafana/telegraf/etc:/etc"
+  grafana:
+    image: grafana/grafana:7.0.3
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    links:
+      - influxdb
+    volumes: 
+      - "/home/viplov/Documents/Docker_Project/Grafana/grafana/var/lib:/var/lib"  
+networks:
+  monitoring:      
